@@ -1,5 +1,5 @@
-import { z } from 'zod';
-import { Prisma } from '@prisma/client';
+import { z } from "zod"
+import { Prisma } from "@prisma/client"
 
 /////////////////////////////////////////
 // HELPER FUNCTIONS
@@ -8,13 +8,19 @@ import { Prisma } from '@prisma/client';
 // JSON
 //------------------------------------------------------
 
-export type NullableJsonInput = Prisma.JsonValue | null | 'JsonNull' | 'DbNull' | Prisma.NullTypes.DbNull | Prisma.NullTypes.JsonNull;
+export type NullableJsonInput =
+  | Prisma.JsonValue
+  | null
+  | "JsonNull"
+  | "DbNull"
+  | Prisma.NullTypes.DbNull
+  | Prisma.NullTypes.JsonNull
 
 export const transformJsonNull = (v?: NullableJsonInput) => {
-  if (!v || v === 'DbNull') return Prisma.NullTypes.DbNull;
-  if (v === 'JsonNull') return Prisma.NullTypes.JsonNull;
-  return v;
-};
+  if (!v || v === "DbNull") return Prisma.NullTypes.DbNull
+  if (v === "JsonNull") return Prisma.NullTypes.JsonNull
+  return v
+}
 
 export const JsonValueSchema: z.ZodType<Prisma.JsonValue> = z.lazy(() =>
   z.union([
@@ -22,19 +28,22 @@ export const JsonValueSchema: z.ZodType<Prisma.JsonValue> = z.lazy(() =>
     z.number(),
     z.boolean(),
     z.literal(null),
-    z.record(z.string(), z.lazy(() => JsonValueSchema.optional())),
+    z.record(
+      z.string(),
+      z.lazy(() => JsonValueSchema.optional())
+    ),
     z.array(z.lazy(() => JsonValueSchema)),
   ])
-);
+)
 
-export type JsonValueType = z.infer<typeof JsonValueSchema>;
+export type JsonValueType = z.infer<typeof JsonValueSchema>
 
 export const NullableJsonValue = z
-  .union([JsonValueSchema, z.literal('DbNull'), z.literal('JsonNull')])
+  .union([JsonValueSchema, z.literal("DbNull"), z.literal("JsonNull")])
   .nullable()
-  .transform((v) => transformJsonNull(v));
+  .transform((v) => transformJsonNull(v))
 
-export type NullableJsonValueType = z.infer<typeof NullableJsonValue>;
+export type NullableJsonValueType = z.infer<typeof NullableJsonValue>
 
 export const InputJsonValueSchema: z.ZodType<Prisma.InputJsonValue> = z.lazy(() =>
   z.union([
@@ -42,155 +51,478 @@ export const InputJsonValueSchema: z.ZodType<Prisma.InputJsonValue> = z.lazy(() 
     z.number(),
     z.boolean(),
     z.object({ toJSON: z.any() }),
-    z.record(z.string(), z.lazy(() => z.union([InputJsonValueSchema, z.literal(null)]))),
+    z.record(
+      z.string(),
+      z.lazy(() => z.union([InputJsonValueSchema, z.literal(null)]))
+    ),
     z.array(z.lazy(() => z.union([InputJsonValueSchema, z.literal(null)]))),
   ])
-);
+)
 
-export type InputJsonValueType = z.infer<typeof InputJsonValueSchema>;
-
+export type InputJsonValueType = z.infer<typeof InputJsonValueSchema>
 
 /////////////////////////////////////////
 // ENUMS
 /////////////////////////////////////////
 
-export const TransactionIsolationLevelSchema = z.enum(['ReadUncommitted','ReadCommitted','RepeatableRead','Serializable']);
+export const TransactionIsolationLevelSchema = z.enum([
+  "ReadUncommitted",
+  "ReadCommitted",
+  "RepeatableRead",
+  "Serializable",
+])
 
-export const MembershipScalarFieldEnumSchema = z.enum(['id','userId','type','specialization','start','end']);
+export const MembershipScalarFieldEnumSchema = z.enum(["id", "userId", "type", "specialization", "start", "end"])
 
-export const RelationLoadStrategySchema = z.enum(['query','join']);
+export const RelationLoadStrategySchema = z.enum(["query", "join"])
 
-export const UserScalarFieldEnumSchema = z.enum(['id','profileSlug','name','email','imageUrl','biography','phone','gender','dietaryRestrictions','ntnuUsername','flags','workspaceUserId','createdAt','updatedAt','privacyPermissionsId','notificationPermissionsId']);
+export const UserScalarFieldEnumSchema = z.enum([
+  "id",
+  "profileSlug",
+  "name",
+  "email",
+  "imageUrl",
+  "biography",
+  "phone",
+  "gender",
+  "dietaryRestrictions",
+  "ntnuUsername",
+  "flags",
+  "workspaceUserId",
+  "createdAt",
+  "updatedAt",
+  "privacyPermissionsId",
+  "notificationPermissionsId",
+])
 
-export const CompanyScalarFieldEnumSchema = z.enum(['id','name','slug','description','phone','email','website','location','imageUrl','createdAt','updatedAt']);
+export const CompanyScalarFieldEnumSchema = z.enum([
+  "id",
+  "name",
+  "slug",
+  "description",
+  "phone",
+  "email",
+  "website",
+  "location",
+  "imageUrl",
+  "createdAt",
+  "updatedAt",
+])
 
-export const GroupScalarFieldEnumSchema = z.enum(['slug','abbreviation','name','shortDescription','description','imageUrl','email','contactUrl','showLeaderAsContact','createdAt','deactivatedAt','workspaceGroupId','memberVisibility','recruitmentMethod','type']);
+export const GroupScalarFieldEnumSchema = z.enum([
+  "slug",
+  "abbreviation",
+  "name",
+  "shortDescription",
+  "description",
+  "imageUrl",
+  "email",
+  "contactUrl",
+  "showLeaderAsContact",
+  "createdAt",
+  "deactivatedAt",
+  "workspaceGroupId",
+  "memberVisibility",
+  "recruitmentMethod",
+  "type",
+])
 
-export const GroupMembershipScalarFieldEnumSchema = z.enum(['id','start','end','createdAt','updatedAt','groupId','userId']);
+export const GroupMembershipScalarFieldEnumSchema = z.enum([
+  "id",
+  "start",
+  "end",
+  "createdAt",
+  "updatedAt",
+  "groupId",
+  "userId",
+])
 
-export const GroupMembershipRoleScalarFieldEnumSchema = z.enum(['membershipId','roleId']);
+export const GroupMembershipRoleScalarFieldEnumSchema = z.enum(["membershipId", "roleId"])
 
-export const GroupRoleScalarFieldEnumSchema = z.enum(['id','name','type','groupId']);
+export const GroupRoleScalarFieldEnumSchema = z.enum(["id", "name", "type", "groupId"])
 
-export const AttendanceScalarFieldEnumSchema = z.enum(['id','registerStart','registerEnd','deregisterDeadline','selections','createdAt','updatedAt','attendancePrice']);
+export const AttendanceScalarFieldEnumSchema = z.enum([
+  "id",
+  "registerStart",
+  "registerEnd",
+  "deregisterDeadline",
+  "selections",
+  "createdAt",
+  "updatedAt",
+  "attendancePrice",
+])
 
-export const AttendancePoolScalarFieldEnumSchema = z.enum(['id','title','mergeDelayHours','yearCriteria','capacity','createdAt','updatedAt','attendanceId','taskId']);
+export const AttendancePoolScalarFieldEnumSchema = z.enum([
+  "id",
+  "title",
+  "mergeDelayHours",
+  "yearCriteria",
+  "capacity",
+  "createdAt",
+  "updatedAt",
+  "attendanceId",
+  "taskId",
+])
 
-export const AttendeeScalarFieldEnumSchema = z.enum(['id','userGrade','selections','reserved','earliestReservationAt','attendedAt','createdAt','updatedAt','paymentDeadline','paymentLink','paymentId','paymentReservedAt','paymentChargeDeadline','paymentChargedAt','paymentRefundedAt','paymentCheckoutUrl','attendanceId','userId','attendancePoolId','paymentRefundedById']);
+export const AttendeeScalarFieldEnumSchema = z.enum([
+  "id",
+  "userGrade",
+  "selections",
+  "reserved",
+  "earliestReservationAt",
+  "attendedAt",
+  "createdAt",
+  "updatedAt",
+  "paymentDeadline",
+  "paymentLink",
+  "paymentId",
+  "paymentReservedAt",
+  "paymentChargeDeadline",
+  "paymentChargedAt",
+  "paymentRefundedAt",
+  "paymentCheckoutUrl",
+  "attendanceId",
+  "userId",
+  "attendancePoolId",
+  "paymentRefundedById",
+])
 
-export const EventScalarFieldEnumSchema = z.enum(['id','title','start','end','status','description','shortDescription','imageUrl','locationTitle','locationAddress','locationLink','type','markForMissedAttendance','createdAt','updatedAt','attendanceId','parentId','metadataImportId']);
+export const EventScalarFieldEnumSchema = z.enum([
+  "id",
+  "title",
+  "start",
+  "end",
+  "status",
+  "description",
+  "shortDescription",
+  "imageUrl",
+  "locationTitle",
+  "locationAddress",
+  "locationLink",
+  "type",
+  "markForMissedAttendance",
+  "createdAt",
+  "updatedAt",
+  "attendanceId",
+  "parentId",
+  "metadataImportId",
+])
 
-export const EventCompanyScalarFieldEnumSchema = z.enum(['eventId','companyId']);
+export const EventCompanyScalarFieldEnumSchema = z.enum(["eventId", "companyId"])
 
-export const MarkScalarFieldEnumSchema = z.enum(['id','title','details','duration','weight','type','createdAt','updatedAt']);
+export const MarkScalarFieldEnumSchema = z.enum([
+  "id",
+  "title",
+  "details",
+  "duration",
+  "weight",
+  "type",
+  "createdAt",
+  "updatedAt",
+])
 
-export const MarkGroupScalarFieldEnumSchema = z.enum(['markId','groupId']);
+export const MarkGroupScalarFieldEnumSchema = z.enum(["markId", "groupId"])
 
-export const PersonalMarkScalarFieldEnumSchema = z.enum(['createdAt','markId','userId','givenById']);
+export const PersonalMarkScalarFieldEnumSchema = z.enum(["createdAt", "markId", "userId", "givenById"])
 
-export const PrivacyPermissionsScalarFieldEnumSchema = z.enum(['id','userId','profileVisible','usernameVisible','emailVisible','phoneVisible','addressVisible','attendanceVisible','createdAt','updatedAt']);
+export const PrivacyPermissionsScalarFieldEnumSchema = z.enum([
+  "id",
+  "userId",
+  "profileVisible",
+  "usernameVisible",
+  "emailVisible",
+  "phoneVisible",
+  "addressVisible",
+  "attendanceVisible",
+  "createdAt",
+  "updatedAt",
+])
 
-export const NotificationPermissionsScalarFieldEnumSchema = z.enum(['id','userId','applications','newArticles','standardNotifications','groupMessages','markRulesUpdates','receipts','registrationByAdministrator','registrationStart','createdAt','updatedAt']);
+export const NotificationPermissionsScalarFieldEnumSchema = z.enum([
+  "id",
+  "userId",
+  "applications",
+  "newArticles",
+  "standardNotifications",
+  "groupMessages",
+  "markRulesUpdates",
+  "receipts",
+  "registrationByAdministrator",
+  "registrationStart",
+  "createdAt",
+  "updatedAt",
+])
 
-export const EventHostingGroupScalarFieldEnumSchema = z.enum(['groupId','eventId']);
+export const EventHostingGroupScalarFieldEnumSchema = z.enum(["groupId", "eventId"])
 
-export const JobListingScalarFieldEnumSchema = z.enum(['id','title','description','shortDescription','start','end','featured','hidden','deadline','employment','applicationLink','applicationEmail','rollingAdmission','createdAt','updatedAt','companyId']);
+export const JobListingScalarFieldEnumSchema = z.enum([
+  "id",
+  "title",
+  "description",
+  "shortDescription",
+  "start",
+  "end",
+  "featured",
+  "hidden",
+  "deadline",
+  "employment",
+  "applicationLink",
+  "applicationEmail",
+  "rollingAdmission",
+  "createdAt",
+  "updatedAt",
+  "companyId",
+])
 
-export const JobListingLocationScalarFieldEnumSchema = z.enum(['name','createdAt','jobListingId']);
+export const JobListingLocationScalarFieldEnumSchema = z.enum(["name", "createdAt", "jobListingId"])
 
-export const OfflineScalarFieldEnumSchema = z.enum(['id','title','fileUrl','imageUrl','publishedAt','createdAt','updatedAt']);
+export const OfflineScalarFieldEnumSchema = z.enum([
+  "id",
+  "title",
+  "fileUrl",
+  "imageUrl",
+  "publishedAt",
+  "createdAt",
+  "updatedAt",
+])
 
-export const ArticleScalarFieldEnumSchema = z.enum(['id','slug','title','author','photographer','imageUrl','excerpt','content','isFeatured','vimeoId','createdAt','updatedAt']);
+export const ArticleScalarFieldEnumSchema = z.enum([
+  "id",
+  "slug",
+  "title",
+  "author",
+  "photographer",
+  "imageUrl",
+  "excerpt",
+  "content",
+  "isFeatured",
+  "vimeoId",
+  "createdAt",
+  "updatedAt",
+])
 
-export const ArticleTagScalarFieldEnumSchema = z.enum(['name']);
+export const ArticleTagScalarFieldEnumSchema = z.enum(["name"])
 
-export const ArticleTagLinkScalarFieldEnumSchema = z.enum(['articleId','tagName']);
+export const ArticleTagLinkScalarFieldEnumSchema = z.enum(["articleId", "tagName"])
 
-export const TaskScalarFieldEnumSchema = z.enum(['id','type','status','payload','createdAt','scheduledAt','processedAt','recurringTaskId']);
+export const TaskScalarFieldEnumSchema = z.enum([
+  "id",
+  "type",
+  "status",
+  "payload",
+  "createdAt",
+  "scheduledAt",
+  "processedAt",
+  "recurringTaskId",
+])
 
-export const RecurringTaskScalarFieldEnumSchema = z.enum(['id','type','payload','createdAt','schedule','lastRunAt','nextRunAt']);
+export const RecurringTaskScalarFieldEnumSchema = z.enum([
+  "id",
+  "type",
+  "payload",
+  "createdAt",
+  "schedule",
+  "lastRunAt",
+  "nextRunAt",
+])
 
-export const FeedbackFormScalarFieldEnumSchema = z.enum(['id','publicResultsToken','createdAt','updatedAt','answerDeadline','eventId']);
+export const FeedbackFormScalarFieldEnumSchema = z.enum([
+  "id",
+  "publicResultsToken",
+  "createdAt",
+  "updatedAt",
+  "answerDeadline",
+  "eventId",
+])
 
-export const FeedbackQuestionScalarFieldEnumSchema = z.enum(['id','label','required','showInPublicResults','type','order','createdAt','updatedAt','feedbackFormId']);
+export const FeedbackQuestionScalarFieldEnumSchema = z.enum([
+  "id",
+  "label",
+  "required",
+  "showInPublicResults",
+  "type",
+  "order",
+  "createdAt",
+  "updatedAt",
+  "feedbackFormId",
+])
 
-export const FeedbackQuestionOptionScalarFieldEnumSchema = z.enum(['id','name','questionId']);
+export const FeedbackQuestionOptionScalarFieldEnumSchema = z.enum(["id", "name", "questionId"])
 
-export const FeedbackQuestionAnswerScalarFieldEnumSchema = z.enum(['id','value','questionId','formAnswerId']);
+export const FeedbackQuestionAnswerScalarFieldEnumSchema = z.enum(["id", "value", "questionId", "formAnswerId"])
 
-export const FeedbackQuestionAnswerOptionLinkScalarFieldEnumSchema = z.enum(['feedbackQuestionOptionId','feedbackQuestionAnswerId']);
+export const FeedbackQuestionAnswerOptionLinkScalarFieldEnumSchema = z.enum([
+  "feedbackQuestionOptionId",
+  "feedbackQuestionAnswerId",
+])
 
-export const FeedbackFormAnswerScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','feedbackFormId','attendeeId']);
+export const FeedbackFormAnswerScalarFieldEnumSchema = z.enum([
+  "id",
+  "createdAt",
+  "updatedAt",
+  "feedbackFormId",
+  "attendeeId",
+])
 
-export const AuditLogScalarFieldEnumSchema = z.enum(['id','tableName','rowId','createdAt','operation','rowData','transactionId','userId']);
+export const AuditLogScalarFieldEnumSchema = z.enum([
+  "id",
+  "tableName",
+  "rowId",
+  "createdAt",
+  "operation",
+  "rowData",
+  "transactionId",
+  "userId",
+])
 
-export const DeregisterReasonScalarFieldEnumSchema = z.enum(['id','createdAt','registeredAt','type','details','userGrade','userId','eventId']);
+export const DeregisterReasonScalarFieldEnumSchema = z.enum([
+  "id",
+  "createdAt",
+  "registeredAt",
+  "type",
+  "details",
+  "userGrade",
+  "userId",
+  "eventId",
+])
 
-export const SortOrderSchema = z.enum(['asc','desc']);
+export const SortOrderSchema = z.enum(["asc", "desc"])
 
-export const JsonNullValueInputSchema = z.enum(['JsonNull',]).transform((value) => (value === 'JsonNull' ? Prisma.JsonNull : value));
+export const JsonNullValueInputSchema = z
+  .enum(["JsonNull"])
+  .transform((value) => (value === "JsonNull" ? Prisma.JsonNull : value))
 
-export const NullableJsonNullValueInputSchema = z.enum(['DbNull','JsonNull',]).transform((value) => value === 'JsonNull' ? Prisma.JsonNull : value === 'DbNull' ? Prisma.DbNull : value);
+export const NullableJsonNullValueInputSchema = z
+  .enum(["DbNull", "JsonNull"])
+  .transform((value) => (value === "JsonNull" ? Prisma.JsonNull : value === "DbNull" ? Prisma.DbNull : value))
 
-export const QueryModeSchema = z.enum(['default','insensitive']);
+export const QueryModeSchema = z.enum(["default", "insensitive"])
 
-export const NullsOrderSchema = z.enum(['first','last']);
+export const NullsOrderSchema = z.enum(["first", "last"])
 
-export const JsonNullValueFilterSchema = z.enum(['DbNull','JsonNull','AnyNull',]).transform((value) => value === 'JsonNull' ? Prisma.JsonNull : value === 'DbNull' ? Prisma.DbNull : value === 'AnyNull' ? Prisma.AnyNull : value);
+export const JsonNullValueFilterSchema = z
+  .enum(["DbNull", "JsonNull", "AnyNull"])
+  .transform((value) =>
+    value === "JsonNull"
+      ? Prisma.JsonNull
+      : value === "DbNull"
+        ? Prisma.DbNull
+        : value === "AnyNull"
+          ? Prisma.AnyNull
+          : value
+  )
 
-export const MembershipTypeSchema = z.enum(['BACHELOR_STUDENT','MASTER_STUDENT','PHD_STUDENT','KNIGHT','SOCIAL_MEMBER','OTHER']);
+export const MembershipTypeSchema = z.enum([
+  "BACHELOR_STUDENT",
+  "MASTER_STUDENT",
+  "PHD_STUDENT",
+  "KNIGHT",
+  "SOCIAL_MEMBER",
+  "OTHER",
+])
 
 export type MembershipTypeType = `${z.infer<typeof MembershipTypeSchema>}`
 
-export const MembershipSpecializationSchema = z.enum(['ARTIFICIAL_INTELLIGENCE','DATABASE_AND_SEARCH','INTERACTION_DESIGN','SOFTWARE_ENGINEERING','UNKNOWN']);
+export const MembershipSpecializationSchema = z.enum([
+  "ARTIFICIAL_INTELLIGENCE",
+  "DATABASE_AND_SEARCH",
+  "INTERACTION_DESIGN",
+  "SOFTWARE_ENGINEERING",
+  "UNKNOWN",
+])
 
 export type MembershipSpecializationType = `${z.infer<typeof MembershipSpecializationSchema>}`
 
-export const GroupTypeSchema = z.enum(['COMMITTEE','NODE_COMMITTEE','ASSOCIATED','INTEREST_GROUP']);
+export const GroupTypeSchema = z.enum(["COMMITTEE", "NODE_COMMITTEE", "ASSOCIATED", "INTEREST_GROUP"])
 
 export type GroupTypeType = `${z.infer<typeof GroupTypeSchema>}`
 
-export const GroupMemberVisibilitySchema = z.enum(['ALL_MEMBERS','WITH_ROLES','LEADER','NONE']);
+export const GroupMemberVisibilitySchema = z.enum(["ALL_MEMBERS", "WITH_ROLES", "LEADER", "NONE"])
 
 export type GroupMemberVisibilityType = `${z.infer<typeof GroupMemberVisibilitySchema>}`
 
-export const GroupRecruitmentMethodSchema = z.enum(['NONE','SPRING_APPLICATION','AUTUMN_APPLICATION','GENERAL_ASSEMBLY','NOMINATION','OTHER']);
+export const GroupRecruitmentMethodSchema = z.enum([
+  "NONE",
+  "SPRING_APPLICATION",
+  "AUTUMN_APPLICATION",
+  "GENERAL_ASSEMBLY",
+  "NOMINATION",
+  "OTHER",
+])
 
 export type GroupRecruitmentMethodType = `${z.infer<typeof GroupRecruitmentMethodSchema>}`
 
-export const GroupRoleTypeSchema = z.enum(['LEADER','PUNISHER','TREASURER','COSMETIC','DEPUTY_LEADER','TRUSTEE','EMAIL_ONLY']);
+export const GroupRoleTypeSchema = z.enum([
+  "LEADER",
+  "PUNISHER",
+  "TREASURER",
+  "COSMETIC",
+  "DEPUTY_LEADER",
+  "TRUSTEE",
+  "EMAIL_ONLY",
+])
 
 export type GroupRoleTypeType = `${z.infer<typeof GroupRoleTypeSchema>}`
 
-export const EventStatusSchema = z.enum(['DRAFT','PUBLIC','DELETED']);
+export const EventStatusSchema = z.enum(["DRAFT", "PUBLIC", "DELETED"])
 
 export type EventStatusType = `${z.infer<typeof EventStatusSchema>}`
 
-export const EventTypeSchema = z.enum(['SOCIAL','ACADEMIC','COMPANY','GENERAL_ASSEMBLY','INTERNAL','OTHER','WELCOME']);
+export const EventTypeSchema = z.enum([
+  "SOCIAL",
+  "ACADEMIC",
+  "COMPANY",
+  "GENERAL_ASSEMBLY",
+  "INTERNAL",
+  "OTHER",
+  "WELCOME",
+])
 
 export type EventTypeType = `${z.infer<typeof EventTypeSchema>}`
 
-export const MarkTypeSchema = z.enum(['MANUAL','LATE_ATTENDANCE','MISSED_ATTENDANCE','MISSING_FEEDBACK','MISSING_PAYMENT']);
+export const MarkTypeSchema = z.enum([
+  "MANUAL",
+  "LATE_ATTENDANCE",
+  "MISSED_ATTENDANCE",
+  "MISSING_FEEDBACK",
+  "MISSING_PAYMENT",
+])
 
 export type MarkTypeType = `${z.infer<typeof MarkTypeSchema>}`
 
-export const EmploymentTypeSchema = z.enum(['PARTTIME','FULLTIME','SUMMER_INTERNSHIP','OTHER']);
+export const EmploymentTypeSchema = z.enum(["PARTTIME", "FULLTIME", "SUMMER_INTERNSHIP", "OTHER"])
 
 export type EmploymentTypeType = `${z.infer<typeof EmploymentTypeSchema>}`
 
-export const TaskTypeSchema = z.enum(['RESERVE_ATTENDEE','CHARGE_ATTENDEE','MERGE_ATTENDANCE_POOLS','VERIFY_PAYMENT','VERIFY_FEEDBACK_ANSWERED','SEND_FEEDBACK_FORM_EMAILS','VERIFY_ATTENDEE_ATTENDED']);
+export const TaskTypeSchema = z.enum([
+  "RESERVE_ATTENDEE",
+  "CHARGE_ATTENDEE",
+  "MERGE_ATTENDANCE_POOLS",
+  "VERIFY_PAYMENT",
+  "VERIFY_FEEDBACK_ANSWERED",
+  "SEND_FEEDBACK_FORM_EMAILS",
+  "VERIFY_ATTENDEE_ATTENDED",
+])
 
 export type TaskTypeType = `${z.infer<typeof TaskTypeSchema>}`
 
-export const TaskStatusSchema = z.enum(['PENDING','RUNNING','COMPLETED','FAILED','CANCELED']);
+export const TaskStatusSchema = z.enum(["PENDING", "RUNNING", "COMPLETED", "FAILED", "CANCELED"])
 
 export type TaskStatusType = `${z.infer<typeof TaskStatusSchema>}`
 
-export const FeedbackQuestionTypeSchema = z.enum(['TEXT','LONGTEXT','RATING','CHECKBOX','SELECT','MULTISELECT']);
+export const FeedbackQuestionTypeSchema = z.enum(["TEXT", "LONGTEXT", "RATING", "CHECKBOX", "SELECT", "MULTISELECT"])
 
 export type FeedbackQuestionTypeType = `${z.infer<typeof FeedbackQuestionTypeSchema>}`
 
-export const DeregisterReasonTypeSchema = z.enum(['SCHOOL','WORK','ECONOMY','TIME','SICK','NO_FAMILIAR_FACES','OTHER']);
+export const DeregisterReasonTypeSchema = z.enum([
+  "SCHOOL",
+  "WORK",
+  "ECONOMY",
+  "TIME",
+  "SICK",
+  "NO_FAMILIAR_FACES",
+  "OTHER",
+])
 
 export type DeregisterReasonTypeType = `${z.infer<typeof DeregisterReasonTypeSchema>}`
 
